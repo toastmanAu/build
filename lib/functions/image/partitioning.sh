@@ -218,7 +218,12 @@ function prepare_partitions() {
 	flock -x $FD
 
 	declare -g LOOP
-	LOOP=$(losetup -f) || exit_with_error "Unable to find free loop device"
+	if [[ -n "${USE_FIXED_LOOP_DEVICE}" ]]; then
+		display_alert "Use user defined loop device" "${USE_FIXED_LOOP_DEVICE}" "info"
+		LOOP="${USE_FIXED_LOOP_DEVICE}"
+	else
+		LOOP=$(losetup -f) || exit_with_error "Unable to find free loop device"
+	fi
 	display_alert "Allocated loop device" "LOOP=${LOOP}"
 
 	CHECK_LOOP_FOR_SIZE="no" check_loop_device "$LOOP" # initially loop is zero sized, ignore it.
