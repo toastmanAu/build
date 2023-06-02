@@ -526,9 +526,13 @@ function docker_cli_prepare_launch() {
 		DOCKER_ARGS+=(-v /dev:/tmp/dev:ro)                  # this is an ugly hack (CONTAINER_COMPAT=y), but it is required to get /dev/loopXpY minor number for mknod inside the container, and container itself still uses private /dev internally
 
 		if [[ "${DOCKER_SERVER_USE_STATIC_LOOPS}" == "yes" ]]; then
-			for loop_device_host in "/dev/loop-control" "/dev/loop0" "/dev/loop1" "/dev/loop2" "/dev/loop3" "/dev/loop4" "/dev/loop5" "/dev/loop6" "/dev/loop7"; do # static list; "host" is not real, there's a VM intermediary
-				display_alert "Passing through host loop device to Docker" "static: ${loop_device_host}" "debug"
-				DOCKER_ARGS+=("--device=${loop_device_host}")
+			DOCKER_ARGS+=("--device=/dev/loop-control")
+			# Lets pass up to 64 loop devices
+			for loop_device_host in $(seq 0 64); do # static list; "host" is not real, there's a VM intermediary
+				if [[ -e "/dev/loop${loop_device_host}" ]]; then
+					display_alert "Passing through host loop device to Docker" "static: /dev/${loop_device_host}" "debug"
+					DOCKER_ARGS+=("--device=/dev/loop${loop_device_host}")
+				fi
 			done
 		else
 			for loop_device_host in /dev/loop*; do # pass through loop devices from host to container; includes `loop-control`
