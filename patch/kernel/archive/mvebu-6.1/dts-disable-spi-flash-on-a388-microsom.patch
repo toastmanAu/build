@@ -1,5 +1,5 @@
---- a/arch/arm/boot/dts/armada-38x-solidrun-microsom.dtsi
-+++ b/arch/arm/boot/dts/armada-38x-solidrun-microsom.dtsi
+--- a/arch/arm/boot/dts/marvell/armada-38x-solidrun-microsom.dtsi
++++ b/arch/arm/boot/dts/marvell/armada-38x-solidrun-microsom.dtsi
 @@ -107,6 +107,7 @@
  		compatible = "w25q32", "jedec,spi-nor";
  		reg = <0>; /* Chip select 0 */
